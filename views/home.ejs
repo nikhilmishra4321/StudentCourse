@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <style>
+        nav {
+            background-color: #333;
+            padding: 10px;
+        }
+        nav a {
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        nav a:hover {
+            background-color: #575757;
+        }
+    </style>
+    <nav>
+        <a href="/">Home</a>   
+        <a href="/studentlogin">Student Login</a> 
+    </nav>
+    <h1>Upload File</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="excelFile" name="excelFile" required>
+        <button type="submit">Upload</button>
+    </form>
+    <p id="uploadMessage"></p>
+    <button id="sendEmails">Send Emails</button>
+    <p id="emailMessage"></p>
+    <h2>Email Sending Status</h2>
+    <div id="successEmails" ></div>
+    <div id="failedEmails" ></div>
+    <script>
+    document.getElementById("uploadForm").onsubmit = async function(event) {
+        event.preventDefault(); 
+        const formData = new FormData();
+        formData.append("excelFile", document.getElementById("excelFile").files[0]);
+        try {
+            const response = await fetch("/home/upload-excel", {
+                method: "POST",
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById("uploadMessage").textContent = result.message;
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById("uploadMessage").textContent = 'error occurred during the file upload.';
+        }
+    };
+    document.getElementById("sendEmails").onclick = async function() {
+    try {
+        const response = await fetch("/home/send-emails", {
+            method: "POST"
+        });
+        const result = await response.json();
+        console.log("Server Response:", result);
+        document.getElementById("emailMessage").textContent = result.message;
+        document.getElementById("successEmails").innerHTML = "";
+        document.getElementById("failedEmails").innerHTML = "";
+        if (result.successEmails && result.successEmails.length > 0) {
+            let successHTML = `<strong>Emails sent  to:</strong><ul>`;
+            result.successEmails.forEach(email => {
+                successHTML += `<li>${email}</li>`;
+            });
+            successHTML += `</ul>`;
+            document.getElementById("successEmails").innerHTML = successHTML;
+        }
+        if (result.failedEmails && result.failedEmails.length > 0) {
+            let failedHTML = `<strong>Failed send emails to:</strong><ul>`;
+            result.failedEmails.forEach(email => {
+                failedHTML += `<li>${email}</li>`;
+            });
+            failedHTML += `</ul>`;
+            document.getElementById("failedEmails").innerHTML = failedHTML;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById("emailMessage").textContent = 'error while sending emails.';
+    }
+};
+    </script>
+</body>
+</html>
+
+
+
+
