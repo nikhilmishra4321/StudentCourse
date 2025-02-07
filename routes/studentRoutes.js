@@ -149,6 +149,11 @@ const verifyToken = (req, res, next) => {
     next();
   } catch (err) {
     return res.redirect("/studentlogin");
+
+
+
+
+    
   }
 };
 router.get("/studentlogin", (req, res) => {

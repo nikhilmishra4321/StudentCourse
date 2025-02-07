@@ -41,7 +41,7 @@ const sendAdminEmail = async (email, subject, content) => {
         subject: subject,
         text: `${content}\n\nLogin here: http://localhost:3000/studentlogin`,
         html: `<p>${content.replace(/\n/g, '<br>')}</p>
-               <p><strong><a href="http://localhost:3000/studentlogin" target="_blank">Click here to login</a></strong></p>`
+               <p><strong><a href="https://studentcourse.onrender.com/studentlogin" target="_blank">Click here to login</a></strong></p>`
     };
     try {
         await transporter.sendMail(mailOptions);
